@@ -45,8 +45,8 @@ dependencies = [
 citeget = "citeget.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/thorwhalen/citeget"
-Repository = "https://github.com/thorwhalen/citeget"
+Homepage = "https://github.com/addaix/citeget"
+Repository = "https://github.com/addaix/citeget"
 
 [project.optional-dependencies]
 dev = [
