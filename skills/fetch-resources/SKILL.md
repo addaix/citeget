@@ -113,7 +113,7 @@ Every Markdown file starts with a `<!-- Source: URL -->` line, and that line, no
 
 - `skip_existing` (the default) skips a URL only when a file of the same format already belongs to it, so a `SKIP` really means "already have this page". A folder saved by an older citeget, under older names, is matched by those headers too: the page is skipped, not saved twice.
 - Two different URLs never share a file. When the preferred name is taken by another URL, the query is folded in, else a short hash of the URL.
-- PDFs and other non-Markdown files carry no source record. Within one run they are still kept apart. Across runs, an existing PDF of the same name is taken to be the same document and skipped: [thorwhalen/citeget#32](https://github.com/thorwhalen/citeget/issues/32) tracks that case.
+- PDFs and other non-Markdown files carry no source record. Within one run they are still kept apart. Across runs, an existing PDF of the same name is taken to be the same document and skipped: [thorwhalen/citeget#32](https://github.com/addaix/citeget/issues/32) tracks that case.
 
 ## Format choice (`--prefer` / `prefer=`)
 
