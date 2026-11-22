@@ -333,7 +333,10 @@ def check_url(url: str, *, policy: Optional[NetPolicy] = None) -> str:
             ipaddress.ip_address(host.split("%", 1)[0])
         except ValueError:
             if _NUMERIC_HOST.fullmatch(host):
-                raise _refuse(url, f"{host} is a non-canonical numeric host (resolvers disagree on it)")
+                raise _refuse(
+                    url,
+                    f"{host} is a non-canonical numeric host (resolvers disagree on it)",
+                )
             # a name: judged at connect
         else:
             if not is_public_address(host):
