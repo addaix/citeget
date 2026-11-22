@@ -5,7 +5,7 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-11-22 16:12 UTC** from commit <a href="https://github.com/addaix/citeget/commit/6f523050849468aa2218acc00e46595a814d2446"><code>6f52305</code></a> on branch <code>main</code>, for **citeget 0.2.27** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 18:46 UTC** from commit <a href="https://github.com/addaix/citeget/commit/efaba37b7903561c1f79e4f9ca262b94339e799c"><code>efaba37</code></a> on branch <code>main</code>, for **citeget 0.2.28** (from <code>pyproject.toml</code>).
 
 :::{note}
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -15,9 +15,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/addaix/citeget/commit/6f523050849468aa2218acc00e46595a814d2446"><code>6f523050849468aa2218acc00e46595a814d2446</code></a> |
+| Commit | <a href="https://github.com/addaix/citeget/commit/efaba37b7903561c1f79e4f9ca262b94339e799c"><code>efaba37b7903561c1f79e4f9ca262b94339e799c</code></a> |
 | Branch | <code>main</code> |
-| Tags at this commit | <code>0.2.27</code> |
+| Tags at this commit | <code>0.2.28</code> |
 | Working tree | clean |
 | Remote | <code>https://github.com/addaix/citeget</code> |
 
@@ -26,9 +26,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 | | |
 |---|---|
 | Repository | <code>addaix/citeget</code> |
-| Run | <a href="https://github.com/addaix/citeget/actions/runs/45042350932">45042350932</a> |
+| Run | <a href="https://github.com/addaix/citeget/actions/runs/45056749504">45056749504</a> |
 | Ref | <code>refs/heads/main</code> |
-| Event commit | <code>0a10e7563a984c0f53835df5a5db100699af17ea</code> (in the history of the built commit) |
+| Event commit | <code>970547fa229313a0f6322211396655272f8449b7</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -53,13 +53,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/citeget/0.2.27/">0.2.27</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/citeget/0.2.28/">0.2.28</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/addaix/citeget && cd citeget
-git checkout 6f523050849468aa2218acc00e46595a814d2446
+git checkout efaba37b7903561c1f79e4f9ca262b94339e799c
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

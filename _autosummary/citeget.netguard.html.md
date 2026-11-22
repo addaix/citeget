@@ -28,7 +28,8 @@ Every HTTP request citeget makes goes through [`get()`](#citeget.netguard.get) (
 Because the check is made on the address the socket actually connects to,
 alternative spellings of a host (`2130706433`, `0x7f.1`, `017700000001`,
 a DNS name that resolves to `10.0.0.5`) are all caught: they resolve to the
-same refused address.
+same refused address. Purely numeric non-canonical hosts are also refused up front
+([`check_url()`](#citeget.netguard.check_url)), because resolvers disagree on what they mean.
 
 The guard is on by default. A desktop user who wants citeget to fetch from
 their own LAN or `localhost` can opt out with the environment variable

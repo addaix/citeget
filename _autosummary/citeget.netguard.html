@@ -153,7 +153,8 @@ around the check.</p></li>
 <p>Because the check is made on the address the socket actually connects to,
 alternative spellings of a host (<code class="docutils literal notranslate"><span class="pre">2130706433</span></code>, <code class="docutils literal notranslate"><span class="pre">0x7f.1</span></code>, <code class="docutils literal notranslate"><span class="pre">017700000001</span></code>,
 a DNS name that resolves to <code class="docutils literal notranslate"><span class="pre">10.0.0.5</span></code>) are all caught: they resolve to the
-same refused address.</p>
+same refused address. Purely numeric non-canonical hosts are also refused up front
+(<a class="reference internal" href="#citeget.netguard.check_url" title="citeget.netguard.check_url"><code class="xref py py-func docutils literal notranslate"><span class="pre">check_url()</span></code></a>), because resolvers disagree on what they mean.</p>
 <p>The guard is on by default. A desktop user who wants citeget to fetch from
 their own LAN or <code class="docutils literal notranslate"><span class="pre">localhost</span></code> can opt out with the environment variable
 <code class="docutils literal notranslate"><span class="pre">CITEGET_ALLOW_PRIVATE_NETWORK=1</span></code> or by passing
@@ -826,7 +827,7 @@ fetch.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=eb697a1f"></script>
+<script src="../_static/documentation_options.js?v=0373d9dd"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
