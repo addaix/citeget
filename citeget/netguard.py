@@ -480,7 +480,9 @@ except ImportError:  # pragma: no cover - requests is a hard dependency
 
 #: How much of a body is searched for a ``<meta charset>`` declaration.
 _META_SNIFF_BYTES = 4096
-_META_CHARSET = re.compile(rb"""<meta[^>]+charset\s*=\s*["']?\s*([A-Za-z0-9_.:-]+)""", re.I)
+_META_CHARSET = re.compile(
+    rb"""<meta[^>]+charset\s*=\s*["']?\s*([A-Za-z0-9_.:-]+)""", re.I
+)
 
 
 class GuardedResponse(_requests.Response if _requests else object):
