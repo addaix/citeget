@@ -748,6 +748,23 @@ def _build_default_strategy() -> AcquisitionStrategy:
 register_strategy("default", _build_default_strategy())
 
 
+def _build_open_access_strategy() -> AcquisitionStrategy:
+    """Author, publisher and open-access copies only: no libgen, no sci-hub.
+
+    ``direct`` (the reference's own URL), ``doi`` (Unpaywall), ``arxiv_search`` and
+    ``semantic_scholar`` (open-access PDFs), in that order. No mirror is ever contacted.
+    """
+    return chain(
+        STRATEGIES["direct"],
+        STRATEGIES["doi"],
+        STRATEGIES["arxiv_search"],
+        STRATEGIES["semantic_scholar"],
+    )
+
+
+register_strategy("open_access", _build_open_access_strategy())
+
+
 # ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------

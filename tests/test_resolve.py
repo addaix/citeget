@@ -161,3 +161,24 @@ def test_chain_resolvers_deduplicates():
     ref = Reference(number=1, raw="test")
     urls = combined(ref)
     assert urls == ["http://a.com", "http://b.com", "http://c.com"]
+
+
+def test_open_access_strategy_never_reaches_libgen_or_scihub(monkeypatch, tmp_path):
+    """`open_access` is the open sources only: a miss there is a miss, not a shadow-library try."""
+    from citeget import resolve
+
+    called = []
+
+    def stub(name, result=None):
+        def strategy(ref, filepath):
+            called.append(name)
+            return result
+        return strategy
+
+    for name in ("direct", "doi", "arxiv_search", "semantic_scholar", "libgen", "scihub"):
+        monkeypatch.setitem(resolve.STRATEGIES, name, stub(name))
+    assert "open_access" in list_strategies()
+    strategy = resolve._build_open_access_strategy()
+    ref = Reference(number=1, raw="test", url="")
+    assert strategy(ref, tmp_path / "x.pdf") is None
+    assert called == ["direct", "doi", "arxiv_search", "semantic_scholar"]

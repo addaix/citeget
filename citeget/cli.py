@@ -137,8 +137,10 @@ def acquire(
         delay: Seconds between operations (rate limiting).
         max_refs: Max references to process (0 = all).
         extractor: Named extractor to use (default, standard, broad, bold, ai).
-        strategy: Named acquisition strategy (default, direct, doi, arxiv_search,
-            semantic_scholar, libgen, scihub). Empty uses legacy chain.
+        strategy: Named acquisition strategy (default, open_access, direct, doi,
+            arxiv_search, semantic_scholar, libgen, scihub). Empty uses the legacy
+            chain, which includes libgen and sci-hub; ``open_access`` stays with
+            author, publisher and open-access copies.
         preview: Show extracted references and ask for confirmation.
         auto: Skip confirmation even in preview mode.
     """
@@ -328,6 +330,9 @@ def get_book(
     book in several formats), this ranks every result against what you asked
     for and downloads the best candidate that validates as a complete book,
     falling through to the next one if it turns out to be an excerpt or a stub.
+
+    This command searches libgen only and has no open-access mode. To stay with
+    open sources use ``citeget acquire --strategy open_access`` or ``citeget fetch``.
 
     Args:
         title: The book's title.

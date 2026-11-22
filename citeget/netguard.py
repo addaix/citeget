@@ -47,8 +47,10 @@ citeget.netguard.UnsafeURLError: Refused file:///etc/passwd: scheme 'file' is no
 
 from __future__ import annotations
 
+import codecs
 import ipaddress
 import os
+import re
 import socket
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -476,6 +478,11 @@ except ImportError:  # pragma: no cover - requests is a hard dependency
     _requests = None
 
 
+#: How much of a body is searched for a ``<meta charset>`` declaration.
+_META_SNIFF_BYTES = 4096
+_META_CHARSET = re.compile(rb"""<meta[^>]+charset\s*=\s*["']?\s*([A-Za-z0-9_.:-]+)""", re.I)
+
+
 class GuardedResponse(_requests.Response if _requests else object):
     """A ``requests.Response`` that honours a :class:`NetPolicy`'s ceilings.
 
@@ -537,9 +544,29 @@ class GuardedResponse(_requests.Response if _requests else object):
                 f"for text ({MAX_TEXT_BYTES_ENV_VAR})",
             )
 
+    def _sniff_encoding(self) -> Optional[str]:
+        """The encoding of a body whose ``Content-Type`` names no charset.
+
+        ``requests`` decodes a bare ``text/html`` as Latin-1 (RFC 2616 era), which turns
+        UTF-8 ``é`` into two wrong characters. Prefer what the page says about itself
+        (``<meta charset>`` / ``http-equiv``), then a guess from the bytes.
+        """
+        head = self.content[:_META_SNIFF_BYTES]
+        match = _META_CHARSET.search(head)
+        if match:
+            declared = match.group(1).decode("ascii", "ignore")
+            try:
+                codecs.lookup(declared)
+                return declared
+            except LookupError:
+                pass
+        return self.apparent_encoding
+
     @property
     def text(self):
         self._check_text_size()
+        if "charset" not in (self.headers.get("content-type") or "").lower():
+            self.encoding = self._sniff_encoding() or "utf-8"
         return super().text
 
     def json(self, **kwargs):
