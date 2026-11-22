@@ -26,7 +26,8 @@ Every HTTP request citeget makes goes through :func:`get` (or a
 Because the check is made on the address the socket actually connects to,
 alternative spellings of a host (``2130706433``, ``0x7f.1``, ``017700000001``,
 a DNS name that resolves to ``10.0.0.5``) are all caught: they resolve to the
-same refused address.
+same refused address. Purely numeric non-canonical hosts are also refused up front
+(:func:`check_url`), because resolvers disagree on what they mean.
 
 The guard is on by default. A desktop user who wants citeget to fetch from
 their own LAN or ``localhost`` can opt out with the environment variable
@@ -292,6 +293,14 @@ def _refuse(url_or_host, reason: str) -> UnsafeURLError:
     return UnsafeURLError(f"Refused {url_or_host}: {reason}")
 
 
+#: A host written only in numbers (``0177.0.0.1``, ``0x7f.1``, ``127.1``, ``2130706433``).
+#: ``inet_aton`` reads these as octal, hex or short forms, macOS's resolver reads ``0177`` as
+#: decimal 177, so one URL names different hosts on different machines: never fetch one.
+_NUMERIC_HOST = re.compile(
+    r"(?:0[xX][0-9a-fA-F]+|\d+)(?:\.(?:0[xX][0-9a-fA-F]+|\d+)){0,3}\.?", re.ASCII
+)
+
+
 def check_url(url: str, *, policy: Optional[NetPolicy] = None) -> str:
     """Check the parts of *url* that can be judged without DNS; return it.
 
@@ -323,7 +332,9 @@ def check_url(url: str, *, policy: Optional[NetPolicy] = None) -> str:
         try:
             ipaddress.ip_address(host.split("%", 1)[0])
         except ValueError:
-            pass  # a name, or a non-canonical IPv4 spelling: judged at connect
+            if _NUMERIC_HOST.fullmatch(host):
+                raise _refuse(url, f"{host} is a non-canonical numeric host (resolvers disagree on it)")
+            # a name: judged at connect
         else:
             if not is_public_address(host):
                 raise _refuse(url, f"{host} is not a public address")

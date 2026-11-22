@@ -6,6 +6,7 @@ response, which records every address the guard lets through.
 """
 
 import socket
+import threading
 
 import pytest
 
@@ -50,8 +51,14 @@ class FakeTransport:
         canned = self.responses.get(ip, _response(404, b"nope"))
         if isinstance(canned, list):  # one per connection, the last one repeats
             canned = canned.pop(0) if len(canned) > 1 else canned[0]
-        theirs.sendall(canned)
-        theirs.shutdown(socket.SHUT_WR)
+        def feed():  # off-thread: a macOS socketpair buffers ~8 KB, a bigger body would block here forever
+            try:
+                theirs.sendall(canned)
+                theirs.shutdown(socket.SHUT_WR)
+            except OSError:  # the reader closed early (a body cut off at the limit)
+                pass
+
+        threading.Thread(target=feed, daemon=True).start()
         self._peers.append(theirs)
         return ours
 
