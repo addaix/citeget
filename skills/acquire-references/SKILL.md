@@ -18,7 +18,7 @@ finding paper PDFs in libgen / arxiv / sci-hub, which won't help for web
 content.
 
 **For a list of book titles** (a reading list, "get me these books") use
-`/get-books`. This skill is built around a document's reference section; it
+`/get-books` (`skills/get-books/SKILL.md` in this repository; link it into `~/.claude/skills/` to install). This skill is built around a document's reference section; it
 does not know which book you asked for, so it cannot check that the file it
 got is that book. `/get-books` can.
 
