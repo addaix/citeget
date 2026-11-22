@@ -1,4 +1,4 @@
-> built 2026-11-10 08:21 UTC from 3ecc9c8 (main) · citeget 0.2.26. Details: build_info.json
+> built 2026-11-22 16:12 UTC from 6f52305 (main) · citeget 0.2.27. Details: build_info.json
 
 # index.html.md
 
@@ -247,6 +247,8 @@ Available skills:
 | `/prepare-submission`   | Generate cover letter, checklist, and submission guide    |
 
 ## Acquisition strategy
+
+Which commands can touch which sources: `citeget fetch` only reads the URLs you give it. `citeget acquire` runs the chain below by default; `--strategy open_access` (Python: `acquire_reference(..., strategy="open_access")`) restricts it to the reference’s own URL, Unpaywall, arXiv and Semantic Scholar, with no libgen or sci-hub step and no mirror contact. `citeget download` and `citeget get-book` search libgen only and have no open-access mode.
 
 For each reference, `citeget` tries these sources in order:
 
@@ -686,8 +688,10 @@ then acquires PDFs via direct URL, libgen, arxiv, and sci-hub.
   * **delay** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – Seconds between operations (rate limiting).
   * **max_refs** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Max references to process (0 = all).
   * **extractor** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Named extractor to use (default, standard, broad, bold, ai).
-  * **strategy** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Named acquisition strategy (default, direct, doi, arxiv_search,
-    semantic_scholar, libgen, scihub). Empty uses legacy chain.
+  * **strategy** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Named acquisition strategy (default, open_access, direct, doi,
+    arxiv_search, semantic_scholar, libgen, scihub). Empty uses the legacy
+    chain, which includes libgen and sci-hub; `open_access` stays with
+    author, publisher and open-access copies.
   * **preview** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Show extracted references and ask for confirmation.
   * **auto** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Skip confirmation even in preview mode.
 
@@ -756,6 +760,9 @@ Unlike `download`, which takes libgen’s own top results (usually the same
 book in several formats), this ranks every result against what you asked
 for and downloads the best candidate that validates as a complete book,
 falling through to the next one if it turns out to be an excerpt or a stub.
+
+This command searches libgen only and has no open-access mode. To stay with
+open sources use `citeget acquire --strategy open_access` or `citeget fetch`.
 
 * **Parameters:**
   * **title** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The book’s title.
@@ -4355,35 +4362,35 @@ Validate a file on disk. Extension defaults to the file’s own suffix.
 
 # About this build
 
-This documentation was built on **2026-11-10 08:21 UTC** from commit <a href="https://github.com/thorwhalen/citeget/commit/3ecc9c870375fcdf029fe19b31b6df3026e06d80"><code>3ecc9c8</code></a> on branch <code>main</code>, for **citeget 0.2.26** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 16:12 UTC** from commit <a href="https://github.com/addaix/citeget/commit/6f523050849468aa2218acc00e46595a814d2446"><code>6f52305</code></a> on branch <code>main</code>, for **citeget 0.2.27** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
-|                     |                                                                                                                                                           |
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/citeget/commit/3ecc9c870375fcdf029fe19b31b6df3026e06d80"><code>3ecc9c870375fcdf029fe19b31b6df3026e06d80</code></a> |
-| Branch              | <code>main</code>                                                                                                                                         |
-| Tags at this commit | <code>0.2.26</code>                                                                                                                                       |
-| Working tree        | clean                                                                                                                                                     |
-| Remote              | <code>https://github.com/thorwhalen/citeget</code>                                                                                                        |
+|                     |                                                                                                                                                       |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Commit              | <a href="https://github.com/addaix/citeget/commit/6f523050849468aa2218acc00e46595a814d2446"><code>6f523050849468aa2218acc00e46595a814d2446</code></a> |
+| Branch              | <code>main</code>                                                                                                                                     |
+| Tags at this commit | <code>0.2.27</code>                                                                                                                                   |
+| Working tree        | clean                                                                                                                                                 |
+| Remote              | <code>https://github.com/addaix/citeget</code>                                                                                                        |
 
 ## Continuous integration
 
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
-| Repository   | <code>thorwhalen/citeget</code>                                                            |
-| Run          | <a href="https://github.com/thorwhalen/citeget/actions/runs/42781723232">42781723232</a>   |
+| Repository   | <code>addaix/citeget</code>                                                                |
+| Run          | <a href="https://github.com/addaix/citeget/actions/runs/45042350932">45042350932</a>       |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>73e9a93bbfebcacd30447aa1f74e8e00e6f02cd7</code> (in the history of the built commit) |
+| Event commit | <code>0a10e7563a984c0f53835df5a5db100699af17ea</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.22  |
+| epythet  | 0.2.23  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -4402,14 +4409,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/citeget/0.2.26/">0.2.26</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/citeget/0.2.27/">0.2.27</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
-git clone https://github.com/thorwhalen/citeget && cd citeget
-git checkout 3ecc9c870375fcdf029fe19b31b6df3026e06d80
-pip install "epythet==0.2.22"
+git clone https://github.com/addaix/citeget && cd citeget
+git checkout 6f523050849468aa2218acc00e46595a814d2446
+pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 
@@ -4435,105 +4442,105 @@ Skills are folders holding a `SKILL.md` (the [Agent Skills](https://agentskills.
 Acquire PDFs of academic references from a document. Parses reference sections, tries direct URLs and arxiv, falls back to libgen search with smart query strategies. Logs all attempts and produces references.md + missed_references.md.
 
 ```bash
-gh skill install thorwhalen/citeget acquire-references --agent claude-code
+gh skill install addaix/citeget acquire-references --agent claude-code
 ```
 
-Source: [`skills/acquire-references`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/acquire-references).
+Source: [`skills/acquire-references`](https://github.com/addaix/citeget/tree/HEAD/skills/acquire-references).
 
 ### `add-references`
 
 Find and add references to documents. Use this skill whenever a user provides text (usually markdown) and wants references, citations, or sources added to it. This includes requests like “add references to this document”, “find citations for this”, “source this article”, “add links to back up the claims”, “reference this for publication”, “find supporting evidence”, or any variation where the user has written content and wants it backed by credible sources. Also use when the user asks to generate a references section, find sources for specific claims, or validate statements with citations. Trigger even for indirect requests like “make this more credible”, “this needs sources”, or “prepare this for submission”. Works for blog posts, academic papers, grant proposals, reports, and any written content that benefits from citations.
 
 ```bash
-gh skill install thorwhalen/citeget add-references --agent claude-code
+gh skill install addaix/citeget add-references --agent claude-code
 ```
 
-Source: [`skills/add-references`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/add-references).
+Source: [`skills/add-references`](https://github.com/addaix/citeget/tree/HEAD/skills/add-references).
 
 ### `check-submission-fit`
 
 Assess how well a draft article fits a set of target journals and recommend the best venue. Compares the article’s scope, tone, length, audience, and contribution type against journal profiles. Use when deciding where to submit an article.
 
 ```bash
-gh skill install thorwhalen/citeget check-submission-fit --agent claude-code
+gh skill install addaix/citeget check-submission-fit --agent claude-code
 ```
 
-Source: [`skills/check-submission-fit`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/check-submission-fit).
+Source: [`skills/check-submission-fit`](https://github.com/addaix/citeget/tree/HEAD/skills/check-submission-fit).
 
 ### `fetch-resources`
 
 Download one or more web resources (URLs, markdown links, reference-style citations, mixed prose) and save them as Markdown (default), PDF, or original bytes. Use when the user asks to download, fetch, save, archive, or grab web pages, blog posts, docs, specs, or any URL — especially for non-academic content where the acquire-references skill doesn’t apply. Triggers on “download these URLs”, “save this page”, “grab this article”, “fetch the docs”, “archive these links”.
 
 ```bash
-gh skill install thorwhalen/citeget fetch-resources --agent claude-code
+gh skill install addaix/citeget fetch-resources --agent claude-code
 ```
 
-Source: [`skills/fetch-resources`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/fetch-resources).
+Source: [`skills/fetch-resources`](https://github.com/addaix/citeget/tree/HEAD/skills/fetch-resources).
 
 ### `format-for-journal`
 
 Reformat and adapt a draft article to meet the specific requirements of a target journal (IEEE Software, CACM, IEEE TSE, etc.). Adjusts structure, word count, abstract, references, and required elements. Use when you have a polished draft and need to produce a journal-ready version.
 
 ```bash
-gh skill install thorwhalen/citeget format-for-journal --agent claude-code
+gh skill install addaix/citeget format-for-journal --agent claude-code
 ```
 
-Source: [`skills/format-for-journal`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/format-for-journal).
+Source: [`skills/format-for-journal`](https://github.com/addaix/citeget/tree/HEAD/skills/format-for-journal).
 
 ### `get-books`
 
 Acquire one copy of each book in a list of titles. Ranks libgen results against the requested title and author, validates that what arrives is the complete book rather than an excerpt or a landing page, and falls through to the next candidate when it isn’t. Use for “get me these books”, a reading list, a bibliography of books, or any list of titles — as opposed to a document with a references section (use /acquire-references) or a list of web URLs (use /fetch-resources).
 
 ```bash
-gh skill install thorwhalen/citeget get-books --agent claude-code
+gh skill install addaix/citeget get-books --agent claude-code
 ```
 
-Source: [`skills/get-books`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/get-books).
+Source: [`skills/get-books`](https://github.com/addaix/citeget/tree/HEAD/skills/get-books).
 
 ### `prepare-submission`
 
 Prepare all materials for journal submission and generate a step-by-step submission guide. Creates a submission checklist, cover letter, author metadata, and submission instructions specific to the target journal. Use when an article is ready and you need to actually submit it.
 
 ```bash
-gh skill install thorwhalen/citeget prepare-submission --agent claude-code
+gh skill install addaix/citeget prepare-submission --agent claude-code
 ```
 
-Source: [`skills/prepare-submission`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/prepare-submission).
+Source: [`skills/prepare-submission`](https://github.com/addaix/citeget/tree/HEAD/skills/prepare-submission).
 
 ### `research-topic`
 
 Research a technical or academic topic in depth to support article writing. Finds key papers, surveys the state of the art, identifies competing approaches, and produces a research brief with citations. Use when preparing to write an article and needing to understand the landscape and find references.
 
 ```bash
-gh skill install thorwhalen/citeget research-topic --agent claude-code
+gh skill install addaix/citeget research-topic --agent claude-code
 ```
 
-Source: [`skills/research-topic`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/research-topic).
+Source: [`skills/research-topic`](https://github.com/addaix/citeget/tree/HEAD/skills/research-topic).
 
 ### `review-article`
 
 Review a draft article for academic/technical journal submission. Gives structured feedback on clarity, contribution, structure, novelty, and journal fit. Use when you have a draft article and want an expert critical review before submission.
 
 ```bash
-gh skill install thorwhalen/citeget review-article --agent claude-code
+gh skill install addaix/citeget review-article --agent claude-code
 ```
 
-Source: [`skills/review-article`](https://github.com/thorwhalen/citeget/tree/HEAD/skills/review-article).
+Source: [`skills/review-article`](https://github.com/addaix/citeget/tree/HEAD/skills/review-article).
 
 ## Instruction files
 
 Files agents read before working in this repository.
 
-- [`CLAUDE.md`](https://github.com/thorwhalen/citeget/tree/HEAD/CLAUDE.md): read by Claude Code
+- [`CLAUDE.md`](https://github.com/addaix/citeget/tree/HEAD/CLAUDE.md): read by Claude Code
 
 ## Machine-readable documentation
 
 This site publishes the same documentation in forms that fit an agent’s context window:
 
-- [`llms.txt`](https://thorwhalen.github.io/citeget/llms.txt): an index of every page with a one-line description ([llms.txt](https://llmstxt.org) format)
-- [`citeget.md`](https://thorwhalen.github.io/citeget/citeget.md): the whole documentation as one Markdown file
+- [`llms.txt`](https://addaix.github.io/citeget/llms.txt): an index of every page with a one-line description ([llms.txt](https://llmstxt.org) format)
+- [`citeget.md`](https://addaix.github.io/citeget/citeget.md): the whole documentation as one Markdown file
 - `<page>.html.md`: a rendered Markdown twin of every page, advertised from each page’s `<head>` with `<link rel="alternate" type="text/markdown">`
-- [`objects.inv`](https://thorwhalen.github.io/citeget/objects.inv): the Sphinx inventory: a symbol-to-URL index (`sphobjinv convert plain objects.inv -`)
+- [`objects.inv`](https://addaix.github.io/citeget/objects.inv): the Sphinx inventory: a symbol-to-URL index (`sphobjinv convert plain objects.inv -`)
 
 
 # api.html.md

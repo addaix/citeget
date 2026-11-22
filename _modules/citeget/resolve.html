@@ -48,7 +48,7 @@
     <div class="hidden mr-4 md:flex">
       <a href="../../index.html" class="flex items-center mr-6"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">citeget</span>
       </a><nav class="flex items-center gap-6 text-sm font-medium">
-        <a href="https://github.com/thorwhalen/citeget" class="transition-colors hover:text-foreground/80 text-foreground/60" rel="noopener nofollow">GitHub</a>
+        <a href="https://github.com/addaix/citeget" class="transition-colors hover:text-foreground/80 text-foreground/60" rel="noopener nofollow">GitHub</a>
       </nav></div><button
       class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden"
       type="button" @click="showSidebar = true">
@@ -109,7 +109,7 @@
 
     <div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
       <div class="overflow-y-auto h-full w-full relative pr-6"><nav class="flex md:hidden flex-col font-medium mt-4">
-  <a href="https://github.com/thorwhalen/citeget" rel="nofollow noopener">GitHub</a>
+  <a href="https://github.com/addaix/citeget" rel="nofollow noopener">GitHub</a>
 </nav><nav class="table w-full min-w-full my-6 lg:my-8">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a><ul>
@@ -989,41 +989,58 @@
 </span><span id="line-748"><span class="n">register_strategy</span><span class="p">(</span><span class="s2">"default"</span><span class="p">,</span> <span class="n">_build_default_strategy</span><span class="p">())</span>
 </span><span id="line-749">
 </span><span id="line-750">
-</span><span id="line-751"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-752"><span class="c1"># Main entry point</span>
-</span><span id="line-753"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-754">
-</span><span id="line-755">
+</span><span id="line-751"><span class="k">def</span><span class="w"> </span><span class="nf">_build_open_access_strategy</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AcquisitionStrategy</span><span class="p">:</span>
+</span><span id="line-752"><span class="w">    </span><span class="sd">"""Author, publisher and open-access copies only: no libgen, no sci-hub.</span>
+</span><span id="line-753">
+</span><span id="line-754"><span class="sd">    ``direct`` (the reference's own URL), ``doi`` (Unpaywall), ``arxiv_search`` and</span>
+</span><span id="line-755"><span class="sd">    ``semantic_scholar`` (open-access PDFs), in that order. No mirror is ever contacted.</span>
+</span><span id="line-756"><span class="sd">    """</span>
+</span><span id="line-757">    <span class="k">return</span> <span class="n">chain</span><span class="p">(</span>
+</span><span id="line-758">        <span class="n">STRATEGIES</span><span class="p">[</span><span class="s2">"direct"</span><span class="p">],</span>
+</span><span id="line-759">        <span class="n">STRATEGIES</span><span class="p">[</span><span class="s2">"doi"</span><span class="p">],</span>
+</span><span id="line-760">        <span class="n">STRATEGIES</span><span class="p">[</span><span class="s2">"arxiv_search"</span><span class="p">],</span>
+</span><span id="line-761">        <span class="n">STRATEGIES</span><span class="p">[</span><span class="s2">"semantic_scholar"</span><span class="p">],</span>
+</span><span id="line-762">    <span class="p">)</span>
+</span><span id="line-763">
+</span><span id="line-764">
+</span><span id="line-765"><span class="n">register_strategy</span><span class="p">(</span><span class="s2">"open_access"</span><span class="p">,</span> <span class="n">_build_open_access_strategy</span><span class="p">())</span>
+</span><span id="line-766">
+</span><span id="line-767">
+</span><span id="line-768"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-769"><span class="c1"># Main entry point</span>
+</span><span id="line-770"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-771">
+</span><span id="line-772">
 <div class="viewcode-block" id="resolve_reference">
 <a class="viewcode-back" href="../../_autosummary/citeget.resolve.html#citeget.resolve_reference">[docs]</a>
-</span><span id="line-756"><span class="k">def</span><span class="w"> </span><span class="nf">resolve_reference</span><span class="p">(</span>
-</span><span id="line-757">    <span class="n">ref</span><span class="p">:</span> <span class="n">Reference</span><span class="p">,</span>
-</span><span id="line-758">    <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="line-759">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-760">    <span class="n">strategy</span><span class="p">:</span> <span class="n">AcquisitionStrategy</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-761"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-762"><span class="w">    </span><span class="sd">"""Resolve and download a single reference.</span>
-</span><span id="line-763">
-</span><span id="line-764"><span class="sd">    Args:</span>
-</span><span id="line-765"><span class="sd">        ref: The reference to acquire.</span>
-</span><span id="line-766"><span class="sd">        filepath: Target file path for the download.</span>
-</span><span id="line-767"><span class="sd">        strategy: An :class:`AcquisitionStrategy` callable, a registered</span>
-</span><span id="line-768"><span class="sd">            strategy name (``str``), or ``None`` to use ``"default"``.</span>
-</span><span id="line-769">
-</span><span id="line-770"><span class="sd">    Returns:</span>
-</span><span id="line-771"><span class="sd">        Filepath string on success, ``None`` on failure.</span>
-</span><span id="line-772">
-</span><span id="line-773"><span class="sd">    Raises:</span>
-</span><span id="line-774"><span class="sd">        KeyError: If a string name is not in the registry.</span>
-</span><span id="line-775"><span class="sd">    """</span>
-</span><span id="line-776">    <span class="k">if</span> <span class="n">strategy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-777">        <span class="n">strat</span> <span class="o">=</span> <span class="n">STRATEGIES</span><span class="p">[</span><span class="s2">"default"</span><span class="p">]</span>
-</span><span id="line-778">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-779">        <span class="n">strat</span> <span class="o">=</span> <span class="n">get_strategy</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
-</span><span id="line-780">    <span class="k">else</span><span class="p">:</span>
-</span><span id="line-781">        <span class="n">strat</span> <span class="o">=</span> <span class="n">strategy</span>
-</span><span id="line-782">
-</span><span id="line-783">    <span class="k">return</span> <span class="n">strat</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span></div>
+</span><span id="line-773"><span class="k">def</span><span class="w"> </span><span class="nf">resolve_reference</span><span class="p">(</span>
+</span><span id="line-774">    <span class="n">ref</span><span class="p">:</span> <span class="n">Reference</span><span class="p">,</span>
+</span><span id="line-775">    <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="line-776">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-777">    <span class="n">strategy</span><span class="p">:</span> <span class="n">AcquisitionStrategy</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-778"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-779"><span class="w">    </span><span class="sd">"""Resolve and download a single reference.</span>
+</span><span id="line-780">
+</span><span id="line-781"><span class="sd">    Args:</span>
+</span><span id="line-782"><span class="sd">        ref: The reference to acquire.</span>
+</span><span id="line-783"><span class="sd">        filepath: Target file path for the download.</span>
+</span><span id="line-784"><span class="sd">        strategy: An :class:`AcquisitionStrategy` callable, a registered</span>
+</span><span id="line-785"><span class="sd">            strategy name (``str``), or ``None`` to use ``"default"``.</span>
+</span><span id="line-786">
+</span><span id="line-787"><span class="sd">    Returns:</span>
+</span><span id="line-788"><span class="sd">        Filepath string on success, ``None`` on failure.</span>
+</span><span id="line-789">
+</span><span id="line-790"><span class="sd">    Raises:</span>
+</span><span id="line-791"><span class="sd">        KeyError: If a string name is not in the registry.</span>
+</span><span id="line-792"><span class="sd">    """</span>
+</span><span id="line-793">    <span class="k">if</span> <span class="n">strategy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-794">        <span class="n">strat</span> <span class="o">=</span> <span class="n">STRATEGIES</span><span class="p">[</span><span class="s2">"default"</span><span class="p">]</span>
+</span><span id="line-795">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-796">        <span class="n">strat</span> <span class="o">=</span> <span class="n">get_strategy</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
+</span><span id="line-797">    <span class="k">else</span><span class="p">:</span>
+</span><span id="line-798">        <span class="n">strat</span> <span class="o">=</span> <span class="n">strategy</span>
+</span><span id="line-799">
+</span><span id="line-800">    <span class="k">return</span> <span class="n">strat</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -1038,7 +1055,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=4f11fe06"></script>
+    <script src="../../_static/documentation_options.js?v=eb697a1f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -244,6 +244,8 @@ Available skills:
 
 ## Acquisition strategy
 
+Which commands can touch which sources: `citeget fetch` only reads the URLs you give it. `citeget acquire` runs the chain below by default; `--strategy open_access` (Python: `acquire_reference(..., strategy="open_access")`) restricts it to the reference’s own URL, Unpaywall, arXiv and Semantic Scholar, with no libgen or sci-hub step and no mirror contact. `citeget download` and `citeget get-book` search libgen only and have no open-access mode.
+
 For each reference, `citeget` tries these sources in order:
 
 1. **Direct URL** — if the reference includes an arxiv, OpenReview, or other

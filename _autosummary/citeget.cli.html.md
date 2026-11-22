@@ -29,8 +29,10 @@ then acquires PDFs via direct URL, libgen, arxiv, and sci-hub.
   * **delay** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – Seconds between operations (rate limiting).
   * **max_refs** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Max references to process (0 = all).
   * **extractor** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Named extractor to use (default, standard, broad, bold, ai).
-  * **strategy** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Named acquisition strategy (default, direct, doi, arxiv_search,
-    semantic_scholar, libgen, scihub). Empty uses legacy chain.
+  * **strategy** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Named acquisition strategy (default, open_access, direct, doi,
+    arxiv_search, semantic_scholar, libgen, scihub). Empty uses the legacy
+    chain, which includes libgen and sci-hub; `open_access` stays with
+    author, publisher and open-access copies.
   * **preview** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Show extracted references and ask for confirmation.
   * **auto** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Skip confirmation even in preview mode.
 
@@ -99,6 +101,9 @@ Unlike `download`, which takes libgen’s own top results (usually the same
 book in several formats), this ranks every result against what you asked
 for and downloads the best candidate that validates as a complete book,
 falling through to the next one if it turns out to be an excerpt or a stub.
+
+This command searches libgen only and has no open-access mode. To stay with
+open sources use `citeget acquire --strategy open_access` or `citeget fetch`.
 
 * **Parameters:**
   * **title** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The book’s title.

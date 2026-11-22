@@ -1,38 +1,38 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-10T08:21:34Z",
+  "built_at": "2026-11-22T16:12:53Z",
   "package": {
     "name": "citeget",
-    "version": "0.2.26",
+    "version": "0.2.27",
     "display_name": "citeget",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "3ecc9c870375fcdf029fe19b31b6df3026e06d80",
-    "short_commit": "3ecc9c8",
+    "commit": "6f523050849468aa2218acc00e46595a814d2446",
+    "short_commit": "6f52305",
     "branch": "main",
     "tags": [
-      "0.2.26"
+      "0.2.27"
     ],
     "dirty": false,
-    "remote_url": "https://github.com/thorwhalen/citeget",
-    "commit_url": "https://github.com/thorwhalen/citeget/commit/3ecc9c870375fcdf029fe19b31b6df3026e06d80",
+    "remote_url": "https://github.com/addaix/citeget",
+    "commit_url": "https://github.com/addaix/citeget/commit/6f523050849468aa2218acc00e46595a814d2446",
     "error": null
   },
   "ci": {
     "provider": "github",
-    "repository": "thorwhalen/citeget",
-    "sha": "73e9a93bbfebcacd30447aa1f74e8e00e6f02cd7",
+    "repository": "addaix/citeget",
+    "sha": "0a10e7563a984c0f53835df5a5db100699af17ea",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "42781723232",
-    "run_url": "https://github.com/thorwhalen/citeget/actions/runs/42781723232",
+    "run_id": "45042350932",
+    "run_url": "https://github.com/addaix/citeget/actions/runs/45042350932",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.22",
+    "epythet": "0.2.23",
     "sphinx": "9.1.1",
     "docutils": "0.22.4",
     "python": "3.12.16"
@@ -62,11 +62,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.2.26",
+    "latest": "0.2.27",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/citeget && cd citeget\ngit checkout 3ecc9c870375fcdf029fe19b31b6df3026e06d80\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/addaix/citeget && cd citeget\ngit checkout 6f523050849468aa2218acc00e46595a814d2446\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

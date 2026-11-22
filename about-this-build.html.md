@@ -2,35 +2,35 @@
 
 # About this build
 
-This documentation was built on **2026-11-10 08:21 UTC** from commit <a href="https://github.com/thorwhalen/citeget/commit/3ecc9c870375fcdf029fe19b31b6df3026e06d80"><code>3ecc9c8</code></a> on branch <code>main</code>, for **citeget 0.2.26** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 16:12 UTC** from commit <a href="https://github.com/addaix/citeget/commit/6f523050849468aa2218acc00e46595a814d2446"><code>6f52305</code></a> on branch <code>main</code>, for **citeget 0.2.27** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
-|                     |                                                                                                                                                           |
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/citeget/commit/3ecc9c870375fcdf029fe19b31b6df3026e06d80"><code>3ecc9c870375fcdf029fe19b31b6df3026e06d80</code></a> |
-| Branch              | <code>main</code>                                                                                                                                         |
-| Tags at this commit | <code>0.2.26</code>                                                                                                                                       |
-| Working tree        | clean                                                                                                                                                     |
-| Remote              | <code>https://github.com/thorwhalen/citeget</code>                                                                                                        |
+|                     |                                                                                                                                                       |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Commit              | <a href="https://github.com/addaix/citeget/commit/6f523050849468aa2218acc00e46595a814d2446"><code>6f523050849468aa2218acc00e46595a814d2446</code></a> |
+| Branch              | <code>main</code>                                                                                                                                     |
+| Tags at this commit | <code>0.2.27</code>                                                                                                                                   |
+| Working tree        | clean                                                                                                                                                 |
+| Remote              | <code>https://github.com/addaix/citeget</code>                                                                                                        |
 
 ## Continuous integration
 
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
-| Repository   | <code>thorwhalen/citeget</code>                                                            |
-| Run          | <a href="https://github.com/thorwhalen/citeget/actions/runs/42781723232">42781723232</a>   |
+| Repository   | <code>addaix/citeget</code>                                                                |
+| Run          | <a href="https://github.com/addaix/citeget/actions/runs/45042350932">45042350932</a>       |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>73e9a93bbfebcacd30447aa1f74e8e00e6f02cd7</code> (in the history of the built commit) |
+| Event commit | <code>0a10e7563a984c0f53835df5a5db100699af17ea</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.22  |
+| epythet  | 0.2.23  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -49,14 +49,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/citeget/0.2.26/">0.2.26</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/citeget/0.2.27/">0.2.27</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
-git clone https://github.com/thorwhalen/citeget && cd citeget
-git checkout 3ecc9c870375fcdf029fe19b31b6df3026e06d80
-pip install "epythet==0.2.22"
+git clone https://github.com/addaix/citeget && cd citeget
+git checkout 6f523050849468aa2218acc00e46595a814d2446
+pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 
