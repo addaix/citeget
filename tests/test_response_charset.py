@@ -10,8 +10,10 @@ def _response(body: bytes, content_type: str | None) -> GuardedResponse:
     r.status_code = 200
     if content_type:
         r.headers["Content-Type"] = content_type
-        if "charset" not in content_type:
-            r.encoding = "ISO-8859-1"  # what requests assumes for a bare text/*
+        # what requests does: the header's charset, else Latin-1 for a bare text/*
+        r.encoding = (
+            content_type.split("charset=")[1] if "charset" in content_type else "ISO-8859-1"
+        )
     return r
 
 
