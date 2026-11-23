@@ -958,39 +958,49 @@ _SOURCE_INDEX_MAX_DIRS = 64
 
 
 #: The hidden file, one per output folder, that records the URL of each saved
-#: file that cannot record it itself (a PDF, raw bytes): ``{filename: url}``.
-#: A Markdown file needs no entry: its ``<!-- Source: -->`` header is the record.
-SOURCES_INDEX_NAME = ".citeget-sources.json"
+#: file that cannot record it itself (a PDF, raw bytes): JSON Lines, one
+#: ``{"file": name, "url": url}`` per line, the last line for a name winning.
+#: A Markdown file needs no line: its ``<!-- Source: -->`` header is the record.
+#: Lines are only ever appended, so concurrent runs into one folder never lose
+#: each other's records, and a line for a file no longer there is ignored.
+SOURCES_INDEX_NAME = ".citeget-sources.jsonl"
 
 
 def _read_sources_index(output_dir: Path) -> dict[str, str]:
-    """*output_dir*'s :data:`SOURCES_INDEX_NAME`, or ``{}`` if missing or unreadable."""
+    """*output_dir*'s :data:`SOURCES_INDEX_NAME` as ``{filename: url}``.
+
+    Missing or unreadable: ``{}``. A line that is not a ``{"file", "url"}``
+    object of strings (a torn or hand-edited line) is skipped.
+    """
     try:
-        data = json.loads((output_dir / SOURCES_INDEX_NAME).read_text("utf-8"))
-    except (OSError, ValueError):
+        lines = (output_dir / SOURCES_INDEX_NAME).read_text("utf-8").splitlines()
+    except (OSError, UnicodeDecodeError):
         return {}
-    if not isinstance(data, dict):
-        return {}
-    return {k: v for k, v in data.items() if isinstance(k, str) and isinstance(v, str)}
+    index: dict[str, str] = {}
+    for line in lines:
+        try:
+            rec = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(rec, dict):
+            name, url = rec.get("file"), rec.get("url")
+            if isinstance(name, str) and isinstance(url, str):
+                index[name] = url
+    return index
 
 
 def _record_source(path: Path, url: str) -> None:
-    """Record that *path* came from *url* in its folder's sources index.
+    """Append that *path* came from *url* to its folder's sources index.
 
-    Entries for files no longer in the folder are dropped on the way. The
-    index is written to a temporary file and moved into place, so a crash
-    mid-write never leaves it half written.
+    Best effort: the file is already saved, so a folder that refuses the
+    index (read-only, full) only loses the cross-run record, with a warning.
     """
-    folder = path.parent
-    index = {
-        name: src
-        for name, src in _read_sources_index(folder).items()
-        if (folder / name).is_file()
-    }
-    index[path.name] = url
-    tmp = folder / f"{SOURCES_INDEX_NAME}.tmp"
-    tmp.write_text(json.dumps(index, indent=1, sort_keys=True) + "\n", "utf-8")
-    os.replace(tmp, folder / SOURCES_INDEX_NAME)
+    line = json.dumps({"file": path.name, "url": url}, ensure_ascii=False) + "\n"
+    try:
+        with open(path.parent / SOURCES_INDEX_NAME, "a", encoding="utf-8") as f:
+            f.write(line)
+    except OSError as e:
+        logger.warning("could not record the source of %s: %s", path, e)
 
 
 def _existing_claims(output_dir: Path) -> _Claims:
@@ -1093,8 +1103,11 @@ class _Target:
         path, skip = self.resolve(entry, ext)
         if not skip:
             write(path)
-            if _recorded_source(path) != entry.url:  # it cannot say where it came from
-                _record_source(path, entry.url)
+        if ext != "md" and (not skip or path not in self.claims):
+            # A file that cannot say where it came from: written now, or an
+            # older one with no record that is trusted (and skipped) as this
+            # URL's, which the record makes explicit.
+            _record_source(path, entry.url)
         self.claims[path] = entry.url  # only once the file is there
         result.status = "skipped" if skip else "ok"
         result.output_file = path
