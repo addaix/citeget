@@ -35,6 +35,7 @@ with the existing :mod:`citeget.resolve` registry.
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
 import os
 import math
@@ -797,7 +798,9 @@ def fetch_one(
         timeout: HTTP timeout in seconds.
         skip_existing: If True (default), skip when this URL's output file
             already exists. A ``.md`` file is this URL's when its
-            ``<!-- Source: -->`` header names the URL, whatever its name.
+            ``<!-- Source: -->`` header names the URL, whatever its name; any
+            other file, when the folder's :data:`SOURCES_INDEX_NAME` (written
+            beside the files it records) names the URL for it.
         content: ``"main"`` (default) keeps only the main article in Markdown
             output; ``"full"`` keeps the whole page (the previous behaviour).
         content_extractor: Extractor name or callable ``html -> html``.
@@ -954,16 +957,63 @@ _SOURCE_INDEX: dict = {}
 _SOURCE_INDEX_MAX_DIRS = 64
 
 
+#: The hidden file, one per output folder, that records the URL of each saved
+#: file that cannot record it itself (a PDF, raw bytes): ``{filename: url}``.
+#: A Markdown file needs no entry: its ``<!-- Source: -->`` header is the record.
+SOURCES_INDEX_NAME = ".citeget-sources.json"
+
+
+def _read_sources_index(output_dir: Path) -> dict[str, str]:
+    """*output_dir*'s :data:`SOURCES_INDEX_NAME`, or ``{}`` if missing or unreadable."""
+    try:
+        data = json.loads((output_dir / SOURCES_INDEX_NAME).read_text("utf-8"))
+    except (OSError, ValueError):
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    return {k: v for k, v in data.items() if isinstance(k, str) and isinstance(v, str)}
+
+
+def _record_source(path: Path, url: str) -> None:
+    """Record that *path* came from *url* in its folder's sources index.
+
+    Entries for files no longer in the folder are dropped on the way. The
+    index is written to a temporary file and moved into place, so a crash
+    mid-write never leaves it half written.
+    """
+    folder = path.parent
+    index = {
+        name: src
+        for name, src in _read_sources_index(folder).items()
+        if (folder / name).is_file()
+    }
+    index[path.name] = url
+    tmp = folder / f"{SOURCES_INDEX_NAME}.tmp"
+    tmp.write_text(json.dumps(index, indent=1, sort_keys=True) + "\n", "utf-8")
+    os.replace(tmp, folder / SOURCES_INDEX_NAME)
+
+
 def _existing_claims(output_dir: Path) -> _Claims:
-    """The ``.md`` files already in *output_dir*, mapped to the URL each records.
+    """The files already in *output_dir*, mapped to the URL each came from.
+
+    A ``.md`` file records its URL in its ``<!-- Source: -->`` header; any
+    other file is looked up in the folder's :data:`SOURCES_INDEX_NAME`. The
+    header wins if both name a file.
 
     Seeds a run's claims, so a page fetched before is found under whatever
     name it was saved as, including a name from an older naming scheme (a
-    path stem where the page title is now used). Only new or changed files
-    are opened, so calling this once per URL stays cheap in a large folder.
+    path stem where the page title is now used), and a PDF fetched in an
+    earlier run is not taken for another URL's. Only new or changed ``.md``
+    files are opened, so calling this once per URL stays cheap in a large
+    folder.
     """
     if not output_dir.is_dir():
         return {}
+    indexed = {
+        output_dir / name: src
+        for name, src in _read_sources_index(output_dir).items()
+        if (output_dir / name).is_file()
+    }
     key = str(output_dir.resolve())
     known = _SOURCE_INDEX.get(key, {})
     fresh = {}
@@ -981,7 +1031,7 @@ def _existing_claims(output_dir: Path) -> _Claims:
     if key not in _SOURCE_INDEX and len(_SOURCE_INDEX) >= _SOURCE_INDEX_MAX_DIRS:
         _SOURCE_INDEX.pop(next(iter(_SOURCE_INDEX)))
     _SOURCE_INDEX[key] = fresh
-    return {path: src for _, path, src in fresh.values() if src}
+    return {**indexed, **{path: src for _, path, src in fresh.values() if src}}
 
 
 @dataclass
@@ -1003,10 +1053,11 @@ class _Target:
 
         In order: a :func:`candidate_filenames` name this URL already owns; a
         file of this format it owns under another name, if *adopt*; the first
-        candidate name that is free. An existing file that records no source
-        (a PDF, raw bytes, a hand-made file) is trusted to be this URL's, as
-        before, unless another URL wrote it in this run. Across runs that case
-        stays open: thorwhalen/citeget#32.
+        candidate name that is free. A file's source is its Markdown header or
+        its entry in the folder's :data:`SOURCES_INDEX_NAME`; an existing file
+        with neither (one saved before the index existed, or made by hand) is
+        trusted to be this URL's, as before, unless another URL wrote it in
+        this run.
         """
         url, candidates = (
             entry.url,
@@ -1042,6 +1093,8 @@ class _Target:
         path, skip = self.resolve(entry, ext)
         if not skip:
             write(path)
+            if _recorded_source(path) != entry.url:  # it cannot say where it came from
+                _record_source(path, entry.url)
         self.claims[path] = entry.url  # only once the file is there
         result.status = "skipped" if skip else "ok"
         result.output_file = path
