@@ -8,6 +8,7 @@ naming schemes, ``Retry-After``, site names in titles, and extraction cases
 
 import importlib
 import inspect
+import os
 from types import SimpleNamespace
 
 import pytest
@@ -430,3 +431,116 @@ def test_wayback_urls_shown_as_link_text_are_cleaned_too():
     src = "https://web.archive.org/web/20150308214418/http://x.org/post"
     md = fetch_mod.html_to_markdown(cap, source_url=src, content="full")
     assert "web.archive.org" not in md.split("-->", 1)[1] and "http://x.org/a" in md
+
+
+# --- the sources index: non-Markdown files across runs (#32) -----------------
+
+
+def test_same_named_pdfs_fetched_in_separate_runs_both_land(serve, tmp_path):
+    """A PDF records no source itself, so the folder's index does it for it."""
+    a, b = "http://a.com/x/doc.pdf", "http://b.com/y/doc.pdf"
+    serve({a: b"%PDF-1.4 AAAA", b: b"%PDF-1.4 BBBB"})
+
+    [ra] = fetch_mod.fetch([a], output_dir=tmp_path)
+    fetch_mod._SOURCE_INDEX.clear()  # a fresh process
+    [rb] = fetch_mod.fetch([b], output_dir=tmp_path)
+
+    assert (ra.status, rb.status) == ("ok", "ok")
+    assert ra.output_file != rb.output_file
+    assert ra.output_file.read_bytes() == b"%PDF-1.4 AAAA"
+    assert rb.output_file.read_bytes() == b"%PDF-1.4 BBBB"
+
+    again = fetch_mod.fetch([a, b], output_dir=tmp_path)
+    assert [r.status for r in again] == ["skipped", "skipped"]
+    assert [r.output_file for r in again] == [ra.output_file, rb.output_file]
+
+
+def test_no_skip_never_overwrites_another_urls_pdf(serve, tmp_path):
+    a, b = "http://a.com/x/doc.pdf", "http://b.com/y/doc.pdf"
+    serve({a: b"%PDF-1.4 AAAA", b: b"%PDF-1.4 BBBB"})
+    [ra] = fetch_mod.fetch([a], output_dir=tmp_path)
+
+    [rb] = fetch_mod.fetch([b], output_dir=tmp_path, skip_existing=False)
+
+    assert rb.output_file != ra.output_file
+    assert ra.output_file.read_bytes() == b"%PDF-1.4 AAAA"
+
+
+def test_the_index_records_only_files_that_cannot_record_themselves(
+    serve, tmp_path
+):
+    pdf, page = "http://a.com/x/doc.pdf", "http://a.com/post"
+    serve({pdf: b"%PDF-1.4 AAAA", page: f"<title>Post</title><p>{PROSE}</p>"})
+
+    fetch_mod.fetch([pdf, page], output_dir=tmp_path)
+
+    index = fetch_mod._read_sources_index(tmp_path)
+    assert list(index.values()) == [pdf]
+    assert (tmp_path / next(iter(index))).read_bytes() == b"%PDF-1.4 AAAA"
+
+
+def test_index_entries_for_removed_files_are_ignored_then_dropped(serve, tmp_path):
+    a, b = "http://a.com/x/doc.pdf", "http://b.com/y/doc.pdf"
+    serve({a: b"%PDF-1.4 AAAA", b: b"%PDF-1.4 BBBB"})
+    [ra] = fetch_mod.fetch([a], output_dir=tmp_path)
+    ra.output_file.unlink()
+
+    [rb] = fetch_mod.fetch([b], output_dir=tmp_path)
+
+    assert rb.status == "ok" and rb.output_file.name == ra.output_file.name
+    assert fetch_mod._read_sources_index(tmp_path) == {rb.output_file.name: b}
+
+
+@pytest.mark.parametrize("junk", ["not json", "[1, 2]", '{"doc-pdf.pdf": 3}'])
+def test_an_unreadable_index_is_treated_as_empty(serve, tmp_path, junk):
+    """A PDF with no usable record is trusted to be the asking URL's, as before."""
+    url = "http://a.com/x/doc.pdf"
+    serve({url: b"%PDF-1.4 AAAA"})
+    (tmp_path / fetch_mod.SOURCES_INDEX_NAME).write_text(junk)
+
+    [first] = fetch_mod.fetch([url], output_dir=tmp_path)
+    [again] = fetch_mod.fetch([url], output_dir=tmp_path)
+
+    assert (first.status, again.status) == ("ok", "skipped")
+    assert fetch_mod._read_sources_index(tmp_path) == {first.output_file.name: url}
+
+
+def test_an_older_unrecorded_pdf_is_recorded_when_trusted(serve, tmp_path):
+    """A PDF from before the index is trusted as the asking URL's, once, for good."""
+    a, b = "http://a.com/x/doc.pdf", "http://b.com/y/doc.pdf"
+    serve({a: b"%PDF-1.4 AAAA", b: b"%PDF-1.4 BBBB"})
+    [ra] = fetch_mod.fetch([a], output_dir=tmp_path)
+    (tmp_path / fetch_mod.SOURCES_INDEX_NAME).unlink()  # as if saved by an older citeget
+
+    assert fetch_mod.fetch([a], output_dir=tmp_path)[0].status == "skipped"
+    [rb] = fetch_mod.fetch([b], output_dir=tmp_path)
+
+    assert rb.status == "ok" and rb.output_file != ra.output_file
+
+
+@pytest.mark.skipif(
+    os.name == "nt" or (hasattr(os, "geteuid") and os.geteuid() == 0),
+    reason="needs POSIX folder permissions, not root",
+)
+def test_a_folder_that_refuses_the_index_still_gets_its_files(serve, tmp_path):
+    url = "http://a.com/x/doc.pdf"
+    serve({url: b"%PDF-1.4 AAAA"})
+    [first] = fetch_mod.fetch([url], output_dir=tmp_path)
+    index = tmp_path / fetch_mod.SOURCES_INDEX_NAME
+    index.chmod(0o444)
+    try:
+        [again] = fetch_mod.fetch([url], output_dir=tmp_path, skip_existing=False)
+    finally:
+        index.chmod(0o644)
+    assert again.status == "ok" and again.output_file == first.output_file
+
+
+def test_records_from_concurrent_writers_are_all_kept(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+
+    names = [f"f{i}.pdf" for i in range(200)]
+    for n in names:
+        (tmp_path / n).write_bytes(b"%PDF")
+    with ThreadPoolExecutor(8) as pool:
+        list(pool.map(lambda n: fetch_mod._record_source(tmp_path / n, f"http://x/{n}"), names))
+    assert len(fetch_mod._read_sources_index(tmp_path)) == 200

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- **`fetch` no longer takes one URL's PDF for another's across runs** (#32). PDFs and `prefer="original"` files record their URL in a hidden, append-only `.citeget-sources.jsonl` in the output folder, so two URLs whose files infer the same name get two files, and a re-run skips both. A file saved by an older citeget, with no record, is still trusted as the URL's that first asks for it, and is recorded then.
+
 ### Changed
 - **HTML→Markdown conversion now uses `markdownify` (MIT) instead of
   `html2text` (GPL-3.0-or-later).** `html2text` was a *core* dependency of
