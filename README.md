@@ -2,15 +2,9 @@
 
 Find, acquire, and manage academic references — for AI agents and humans.
 
-`citeget` automates the tedious work of tracking down PDFs for academic
-papers. Point it at a document with a references section, and it will try
-every available source — direct URLs, arxiv, Library Genesis, Sci-Hub — to
-download each one.
+`citeget` automates the tedious work of tracking down PDFs for academic papers. Point it at a document with a references section, and it will try every available source — direct URLs, arxiv, Library Genesis, Sci-Hub — to download each one.
 
-It also handles the more general case: any list of URLs (blog posts, docs,
-specs, product pages) saved as Markdown or PDF — useful when references
-aren't peer-reviewed papers. See [`citeget fetch`](#general-purpose-fetch)
-below.
+It also handles the more general case: any list of URLs (blog posts, docs, specs, product pages) saved as Markdown or PDF — useful when references aren't peer-reviewed papers. See [`citeget fetch`](#general-purpose-fetch) below.
 
 ## Install
 
@@ -45,8 +39,7 @@ citeget fetch "https://example.com/article" --output-dir ~/Downloads/refs
 citeget fetch refs.md --prefer md   # accepts a file with URLs in any form
 ```
 
-The `acquire` command reads the references section, resolves a working
-directory, and downloads every reference it can find:
+The `acquire` command reads the references section, resolves a working directory, and downloads every reference it can find:
 
 ```
 $ citeget acquire paper.md
@@ -76,6 +69,7 @@ Output files:
 
 ### Python API
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from citeget import search, search_and_download
 
@@ -90,10 +84,9 @@ search_and_download("python programming", download_dir="~/papers", max_downloads
 
 ### Getting a specific book
 
-`search_and_download` takes libgen's own ordering, which for a known title is
-usually the same book in several formats, interleaved with summaries and
-download-spam listings. When you want *one copy of one book*, use `get_book`:
+`search_and_download` takes libgen's own ordering, which for a known title is usually the same book in several formats, interleaved with summaries and download-spam listings. When you want *one copy of one book*, use `get_book`:
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from citeget import get_book
 
@@ -102,10 +95,9 @@ path = get_book(
 )
 ```
 
-It ranks every result against the title and author you asked for, downloads the
-best candidate, checks that what arrived is a complete book, and falls through
-to the next candidate if it isn't. The pieces are usable on their own:
+It ranks every result against the title and author you asked for, downloads the best candidate, checks that what arrived is a complete book, and falls through to the next candidate if it isn't. The pieces are usable on their own:
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from citeget import search, rank_results, download_best, validate_download
 
@@ -121,9 +113,9 @@ path = download_best(
 )
 ```
 
-Every knob is a keyword argument with a sensible default — format preference,
-language, scoring weights, size bounds, the decoy pattern:
+Every knob is a keyword argument with a sensible default — format preference, language, scoring weights, size bounds, the decoy pattern:
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from citeget import get_book, ScoreWeights
 
@@ -137,17 +129,11 @@ get_book(
 
 ### Download validation
 
-Nothing about a successful transfer says the bytes are a document. Every
-download path checks magic bytes, rejects HTML pages, enforces a realistic size
-floor, and compares against the size libgen advertised — so a captcha wall or a
-truncated transfer is a failure, not a book. Files are written to a temporary
-path and moved into place only after they validate, so a failed attempt never
-leaves a stub that a later run reads back as a cached success.
+Nothing about a successful transfer says the bytes are a document. Every download path checks magic bytes, rejects HTML pages, enforces a realistic size floor, and compares against the size libgen advertised — so a captcha wall or a truncated transfer is a failure, not a book. Files are written to a temporary path and moved into place only after they validate, so a failed attempt never leaves a stub that a later run reads back as a cached success.
 
-Books get an extra tier of checking, because libgen catalogues excerpts,
-front-matter samples and reviews under the full work's title — files with valid
-PDF magic bytes, several megabytes in size, and 17 pages long:
+Books get an extra tier of checking, because libgen catalogues excerpts, front-matter samples and reviews under the full work's title — files with valid PDF magic bytes, several megabytes in size, and 17 pages long:
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from citeget import download_one, validate_download, BOOK_POLICY
 
@@ -155,10 +141,9 @@ download_one(result, download_dir="~/books", policy=BOOK_POLICY)  # page-count c
 validate_download("suspect.pdf", policy=BOOK_POLICY)  # check one by hand
 ```
 
-`BOOK_POLICY` is opt-in rather than the default because an 80-page floor is
-right for a book and badly wrong for a journal article. `get_book` uses it
-automatically. Build your own with `dataclasses.replace`:
+`BOOK_POLICY` is opt-in rather than the default because an 80-page floor is right for a book and badly wrong for a journal article. `get_book` uses it automatically. Build your own with `dataclasses.replace`:
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from dataclasses import replace
 from citeget import BOOK_POLICY, ValidationPolicy
@@ -168,6 +153,7 @@ lenient = replace(BOOK_POLICY, min_pages=40)
 
 For bulk reference acquisition:
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from citeget import (
     parse_references_section,
@@ -196,10 +182,7 @@ write_references_md(successes, work_dir / "references", work_dir / "references.m
 
 ### AI agent usage (Claude Code skills)
 
-`citeget` ships with AI agent skills — structured prompts that let an
-agent use the tools interactively. The real files live in `skills/` at the
-repository root, with per-skill symlinks in `.claude/skills/` so Claude Code
-finds them too.
+`citeget` ships with AI agent skills — structured prompts that let an agent use the tools interactively. The real files live in `skills/` at the repository root, with per-skill symlinks in `.claude/skills/` so Claude Code finds them too.
 
 **To install one into another project**:
 
@@ -207,9 +190,7 @@ finds them too.
 gh skill install thorwhalen/citeget acquire-references
 ```
 
-**To use in Claude Code**, either work in the citeget project directory
-(skills are auto-discovered), or copy the skill folders into your project's
-`.claude/skills/` directory. Then invoke them by name:
+**To use in Claude Code**, either work in the citeget project directory (skills are auto-discovered), or copy the skill folders into your project's `.claude/skills/` directory. Then invoke them by name:
 
 ```
 > /acquire-references my_paper.md
@@ -220,12 +201,7 @@ gh skill install thorwhalen/citeget acquire-references
 > /prepare-submission draft.md ieee_software
 ```
 
-**To use skills in other systems**, the `SKILL.md` files are self-contained
-markdown documents that describe the workflow, tools needed, and expected
-output. Any AI agent system that supports tool-use prompts can consume them
-— read the `SKILL.md` file and include it in your system prompt alongside
-the relevant tool definitions. The skills call into `citeget`'s Python API,
-so the agent needs access to a Python environment with `citeget` installed.
+**To use skills in other systems**, the `SKILL.md` files are self-contained markdown documents that describe the workflow, tools needed, and expected output. Any AI agent system that supports tool-use prompts can consume them — read the `SKILL.md` file and include it in your system prompt alongside the relevant tool definitions. The skills call into `citeget`'s Python API, so the agent needs access to a Python environment with `citeget` installed.
 
 Available skills:
 
@@ -245,32 +221,21 @@ Which commands can touch which sources: `citeget fetch` only reads the URLs you 
 
 For each reference, `citeget` tries these sources in order:
 
-1. **Direct URL** — if the reference includes an arxiv, OpenReview, or other
-   direct link, download the PDF.
-2. **Library Genesis** — search by title with progressively adjusted
-   specificity (full title → title + author → short title → author + year).
+1. **Direct URL** — if the reference includes an arxiv, OpenReview, or other direct link, download the PDF.
+2. **Library Genesis** — search by title with progressively adjusted specificity (full title → title + author → short title → author + year).
 3. **Arxiv API** — structured search by author + title keywords.
 4. **Sci-Hub** — DOI lookup via Crossref, then Sci-Hub download.
-5. **Fetch fallback** — if no PDF is reachable but the reference has a URL,
-   the page is fetched and saved as Markdown. Catches non-paper references
-   (blog posts, docs, product pages). Disable with `fetch_fallback=False`.
+5. **Fetch fallback** — if no PDF is reachable but the reference has a URL, the page is fetched and saved as Markdown. Catches non-paper references (blog posts, docs, product pages). Disable with `fetch_fallback=False`.
 
-Files are named in APA 7 citation style:
-`{title} ({authors_apa7}, {year}).pdf` — e.g.,
-`Retiming synchronous circuitry (Leiserson & Saxe, 1991).pdf`
+Files are named in APA 7 citation style: `{title} ({authors_apa7}, {year}).pdf` — e.g., `Retiming synchronous circuitry (Leiserson & Saxe, 1991).pdf`
 
-Author parsing handles libgen's mixed conventions — `"Moore, Geoffrey A."`,
-`"Edward R. Tufte"`, `"Chris Voss & Tahl Raz"`, and role markers like
-`"(author)"` — via `citeget.names`, which is also what result ranking matches
-authors with, so the two never disagree.
+Author parsing handles libgen's mixed conventions — `"Moore, Geoffrey A."`, `"Edward R. Tufte"`, `"Chris Voss & Tahl Raz"`, and role markers like `"(author)"` — via `citeget.names`, which is also what result ranking matches authors with, so the two never disagree.
 
 ## General-purpose fetch
 
-Not all "references" are papers. For lists of arbitrary web URLs, use
-`citeget fetch` (or `citeget.fetch()`) — it accepts a URL, a list, a file
-of URLs, or prose with embedded URLs, and saves each one as Markdown
-(default), PDF, or original bytes.
+Not all "references" are papers. For lists of arbitrary web URLs, use `citeget fetch` (or `citeget.fetch()`) — it accepts a URL, a list, a file of URLs, or prose with embedded URLs, and saves each one as Markdown (default), PDF, or original bytes.
 
+<!-- wads-docs: skip live network downloads (libgen, arxiv, browsers) -->
 ```python
 from citeget import fetch
 
@@ -284,16 +249,9 @@ for r in results:
     print(r.status, r.format, r.output_file)
 ```
 
-URL parsing recognizes markdown links `[anchor](url)`, reference-style
-`[1] ... https://url` citations, and bare URLs in prose. Filenames are
-inferred from anchor text → URL path → domain hash.
+URL parsing recognizes markdown links `[anchor](url)`, reference-style `[1] ... https://url` citations, and bare URLs in prose. Filenames are inferred from anchor text → URL path → domain hash.
 
-Markdown output keeps only the **main article** by default (site menus,
-sidebars and footers are dropped; Wayback Machine banners and link prefixes
-are cleaned). Use `--content full` (`content="full"`) for the whole page,
-`--no-include-links` to drop link targets, and `--content-extractor trafilatura`
-(`pip install 'citeget[extract]'`) for a stronger extractor. Any callable
-`html -> html` works as `content_extractor=` in Python.
+Markdown output keeps only the **main article** by default (site menus, sidebars and footers are dropped; Wayback Machine banners and link prefixes are cleaned). Use `--content full` (`content="full"`) for the whole page, `--no-include-links` to drop link targets, and `--content-extractor trafilatura` (`pip install 'citeget[extract]'`) for a stronger extractor. Any callable `html -> html` works as `content_extractor=` in Python.
 
 PDF rendering is opt-in (HTML→PDF needs `wkhtmltopdf`):
 
@@ -306,12 +264,9 @@ Without it, `--prefer pdf` quietly falls back to Markdown.
 
 ## Article publication toolkit
 
-Beyond reference acquisition, `citeget` includes tools for the full
-publication workflow. These are primarily used through Claude Code skills,
-backed by machine-readable journal profiles in `citeget/article_pub/data/journal_profiles.json`.
+Beyond reference acquisition, `citeget` includes tools for the full publication workflow. These are primarily used through Claude Code skills, backed by machine-readable journal profiles in `citeget/article_pub/data/journal_profiles.json`.
 
-Supported journals: IEEE Software, CACM (Practice/Research/Viewpoints),
-IEEE TSE, ACM Queue.
+Supported journals: IEEE Software, CACM (Practice/Research/Viewpoints), IEEE TSE, ACM Queue.
 
 Standalone scripts in `citeget/article_pub/scripts/`:
 
@@ -344,10 +299,7 @@ A refused URL raises `citeget.netguard.UnsafeURLError` (`ResponseTooLargeError` 
 
 ## Mirrors
 
-Libgen mirror domains rotate, so the shipped default list goes stale on its own
-schedule. `citeget` tries each mirror in order, retries one that merely timed
-out before failing over, and tells you which of the two failure modes happened
-if they all fail.
+Libgen mirror domains rotate, so the shipped default list goes stale on its own schedule. `citeget` tries each mirror in order, retries one that merely timed out before failing over, and tells you which of the two failure modes happened if they all fail.
 
 When searches start failing, ask which mirrors are alive:
 
@@ -363,30 +315,16 @@ export CITEGET_LIBGEN_MIRRORS='https://libgen.vg,https://libgen.la'
 export CITEGET_LIBGEN_BASE_URL='https://libgen.la'
 ```
 
-Or pass `base_url=` / `mirrors=` to `search()` and friends. Only
-libgen.vg-family mirrors (the JS `#tablelibgen` layout) are compatible with the
-parser; the older libgen.is/.rs/.st forks use different HTML.
+Or pass `base_url=` / `mirrors=` to `search()` and friends. Only libgen.vg-family mirrors (the JS `#tablelibgen` layout) are compatible with the parser; the older libgen.is/.rs/.st forks use different HTML.
 
 ### Empty results are not always real
 
-Libgen serves a blank result set for queries that do have matches — measured at
-roughly one run in four for one such query, with the same query returning 0
-results and then 21 a minute apart. citeget defends in three layers: each
-mirror is retried, two mirrors must agree before `search()` returns `[]`, and
-`get_book` re-runs the whole search once more. Result *counts* also vary
-legitimately by mirror (21 vs 9 for the same query), so a lower-than-expected
-count is normal.
+Libgen serves a blank result set for queries that do have matches — measured at roughly one run in four for one such query, with the same query returning 0 results and then 21 a minute apart. citeget defends in three layers: each mirror is retried, two mirrors must agree before `search()` returns `[]`, and `get_book` re-runs the whole search once more. Result *counts* also vary legitimately by mirror (21 vs 9 for the same query), so a lower-than-expected count is normal.
 
-If you are building on `search()` directly, treat one empty answer as weak
-evidence and ask again.
+If you are building on `search()` directly, treat one empty answer as weak evidence and ask again.
 
 ## How it works
 
-Library Genesis renders search results via JavaScript, so `citeget` uses
-Playwright (headless Chromium) to load pages. Ad domains are blocked for
-speed. Downloads use session keys extracted from intermediate pages — those
-keys are single-use, so a download is claimed on the first attempt or not at
-all.
+Library Genesis renders search results via JavaScript, so `citeget` uses Playwright (headless Chromium) to load pages. Ad domains are blocked for speed. Downloads use session keys extracted from intermediate pages — those keys are single-use, so a download is claimed on the first attempt or not at all.
 
-The acquisition log records every attempt in TSV format, making it easy to
-audit what was tried, what matched, and what failed.
+The acquisition log records every attempt in TSV format, making it easy to audit what was tried, what matched, and what failed.
