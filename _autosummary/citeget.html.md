@@ -683,7 +683,9 @@ Fetch a single URL and save it under *output_dir*.
   * **timeout** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – HTTP timeout in seconds.
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True (default), skip when this URL’s output file
     already exists. A `.md` file is this URL’s when its
-    `<!-- Source: -->` header names the URL, whatever its name.
+    `<!-- Source: -->` header names the URL, whatever its name; any
+    other file, when the folder’s `SOURCES_INDEX_NAME` (written
+    beside the files it records) names the URL for it.
   * **content** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'main'`, `'full'`]) – `"main"` (default) keeps only the main article in Markdown
     output; `"full"` keeps the whole page (the previous behaviour).
   * **content_extractor** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Extractor name or callable `html -> html`.

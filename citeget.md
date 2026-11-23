@@ -1,4 +1,4 @@
-> built 2026-11-23 07:23 UTC from b88ce0f (main) · citeget 0.2.29. Details: build_info.json
+> built 2026-11-23 22:08 UTC from 8cd8419 (main) · citeget 0.2.30. Details: build_info.json
 
 # index.html.md
 
@@ -257,6 +257,8 @@ for r in results:
 ```
 
 URL parsing recognizes markdown links `[anchor](url)`, reference-style `[1] ... https://url` citations, and bare URLs in prose. Filenames are inferred from anchor text → URL path → domain hash.
+
+Re-running a fetch skips what is already there, and two URLs never share a file, across runs too. A Markdown file records its URL in a `<!-- Source: -->` header. A PDF or an original-bytes file cannot, so its URL goes in a hidden `.citeget-sources.jsonl` beside it, one line per file. Leave that file out if you zip or copy the folder somewhere that does not need it.
 
 Markdown output keeps only the **main article** by default (site menus, sidebars and footers are dropped; Wayback Machine banners and link prefixes are cleaned). Use `--content full` (`content="full"`) for the whole page, `--no-include-links` to drop link targets, and `--content-extractor trafilatura` (`pip install 'citeget[extract]'`) for a stronger extractor. Any callable `html -> html` works as `content_extractor=` in Python.
 
@@ -2289,7 +2291,9 @@ Fetch a single URL and save it under *output_dir*.
   * **timeout** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – HTTP timeout in seconds.
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True (default), skip when this URL’s output file
     already exists. A `.md` file is this URL’s when its
-    `<!-- Source: -->` header names the URL, whatever its name.
+    `<!-- Source: -->` header names the URL, whatever its name; any
+    other file, when the folder’s `SOURCES_INDEX_NAME` (written
+    beside the files it records) names the URL for it.
   * **content** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'main'`, `'full'`]) – `"main"` (default) keeps only the main article in Markdown
     output; `"full"` keeps the whole page (the previous behaviour).
   * **content_extractor** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Extractor name or callable `html -> html`.
@@ -4301,18 +4305,20 @@ Validate a file on disk. Extension defaults to the file’s own suffix.
 
 # About this build
 
-This documentation was built on **2026-11-23 07:23 UTC** from commit <a href="https://github.com/addaix/citeget/commit/b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b"><code>b88ce0f</code></a> on branch <code>main</code>, for **citeget 0.2.29** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 22:08 UTC** from commit <a href="https://github.com/addaix/citeget/commit/8cd84194a1b470041744f58f5c64711d7f4c0d25"><code>8cd8419</code></a> on branch <code>main</code>, for **citeget 0.2.30** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.2.30) is ahead of the latest release on PyPI (0.2.29): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                       |
 |---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/citeget/commit/b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b"><code>b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b</code></a> |
+| Commit              | <a href="https://github.com/addaix/citeget/commit/8cd84194a1b470041744f58f5c64711d7f4c0d25"><code>8cd84194a1b470041744f58f5c64711d7f4c0d25</code></a> |
 | Branch              | <code>main</code>                                                                                                                                     |
-| Tags at this commit | <code>0.2.29</code>                                                                                                                                   |
+| Tags at this commit | <code>0.2.30</code>                                                                                                                                   |
 | Working tree        | clean                                                                                                                                                 |
 | Remote              | <code>https://github.com/addaix/citeget</code>                                                                                                        |
 
@@ -4321,15 +4327,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/citeget</code>                                                                |
-| Run          | <a href="https://github.com/addaix/citeget/actions/runs/45130387317">45130387317</a>       |
+| Run          | <a href="https://github.com/addaix/citeget/actions/runs/45276412619">45276412619</a>       |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>124eb19d7d08a275c0acf7610af9f8f2ed2f1d1d</code> (in the history of the built commit) |
+| Event commit | <code>d3bed80489597be860928180f230c5e38cfc3d6d</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.24  |
+| epythet  | 0.2.25  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -4348,14 +4354,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/citeget/0.2.29/">0.2.29</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/citeget/0.2.29/">0.2.29</a>, older than the documented version (0.2.30).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/addaix/citeget && cd citeget
-git checkout b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b
-pip install "epythet==0.2.24"
+git checkout 8cd84194a1b470041744f58f5c64711d7f4c0d25
+pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

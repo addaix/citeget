@@ -2,18 +2,20 @@
 
 # About this build
 
-This documentation was built on **2026-11-23 07:23 UTC** from commit <a href="https://github.com/addaix/citeget/commit/b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b"><code>b88ce0f</code></a> on branch <code>main</code>, for **citeget 0.2.29** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 22:08 UTC** from commit <a href="https://github.com/addaix/citeget/commit/8cd84194a1b470041744f58f5c64711d7f4c0d25"><code>8cd8419</code></a> on branch <code>main</code>, for **citeget 0.2.30** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.2.30) is ahead of the latest release on PyPI (0.2.29): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                       |
 |---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/addaix/citeget/commit/b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b"><code>b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b</code></a> |
+| Commit              | <a href="https://github.com/addaix/citeget/commit/8cd84194a1b470041744f58f5c64711d7f4c0d25"><code>8cd84194a1b470041744f58f5c64711d7f4c0d25</code></a> |
 | Branch              | <code>main</code>                                                                                                                                     |
-| Tags at this commit | <code>0.2.29</code>                                                                                                                                   |
+| Tags at this commit | <code>0.2.30</code>                                                                                                                                   |
 | Working tree        | clean                                                                                                                                                 |
 | Remote              | <code>https://github.com/addaix/citeget</code>                                                                                                        |
 
@@ -22,15 +24,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>addaix/citeget</code>                                                                |
-| Run          | <a href="https://github.com/addaix/citeget/actions/runs/45130387317">45130387317</a>       |
+| Run          | <a href="https://github.com/addaix/citeget/actions/runs/45276412619">45276412619</a>       |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>124eb19d7d08a275c0acf7610af9f8f2ed2f1d1d</code> (in the history of the built commit) |
+| Event commit | <code>d3bed80489597be860928180f230c5e38cfc3d6d</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.24  |
+| epythet  | 0.2.25  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -49,14 +51,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/citeget/0.2.29/">0.2.29</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/citeget/0.2.29/">0.2.29</a>, older than the documented version (0.2.30).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/addaix/citeget && cd citeget
-git checkout b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b
-pip install "epythet==0.2.24"
+git checkout 8cd84194a1b470041744f58f5c64711d7f4c0d25
+pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

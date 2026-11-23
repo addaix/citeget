@@ -254,6 +254,8 @@ for r in results:
 
 URL parsing recognizes markdown links `[anchor](url)`, reference-style `[1] ... https://url` citations, and bare URLs in prose. Filenames are inferred from anchor text → URL path → domain hash.
 
+Re-running a fetch skips what is already there, and two URLs never share a file, across runs too. A Markdown file records its URL in a `<!-- Source: -->` header. A PDF or an original-bytes file cannot, so its URL goes in a hidden `.citeget-sources.jsonl` beside it, one line per file. Leave that file out if you zip or copy the folder somewhere that does not need it.
+
 Markdown output keeps only the **main article** by default (site menus, sidebars and footers are dropped; Wayback Machine banners and link prefixes are cleaned). Use `--content full` (`content="full"`) for the whole page, `--no-include-links` to drop link targets, and `--content-extractor trafilatura` (`pip install 'citeget[extract]'`) for a stronger extractor. Any callable `html -> html` works as `content_extractor=` in Python.
 
 PDF rendering is opt-in (HTML→PDF needs `wkhtmltopdf`):

@@ -1,38 +1,38 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-23T07:23:12Z",
+  "built_at": "2026-11-23T22:08:43Z",
   "package": {
     "name": "citeget",
-    "version": "0.2.29",
+    "version": "0.2.30",
     "display_name": "citeget",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b",
-    "short_commit": "b88ce0f",
+    "commit": "8cd84194a1b470041744f58f5c64711d7f4c0d25",
+    "short_commit": "8cd8419",
     "branch": "main",
     "tags": [
-      "0.2.29"
+      "0.2.30"
     ],
     "dirty": false,
     "remote_url": "https://github.com/addaix/citeget",
-    "commit_url": "https://github.com/addaix/citeget/commit/b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b",
+    "commit_url": "https://github.com/addaix/citeget/commit/8cd84194a1b470041744f58f5c64711d7f4c0d25",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "addaix/citeget",
-    "sha": "124eb19d7d08a275c0acf7610af9f8f2ed2f1d1d",
+    "sha": "d3bed80489597be860928180f230c5e38cfc3d6d",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "45130387317",
-    "run_url": "https://github.com/addaix/citeget/actions/runs/45130387317",
+    "run_id": "45276412619",
+    "run_url": "https://github.com/addaix/citeget/actions/runs/45276412619",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.24",
+    "epythet": "0.2.25",
     "sphinx": "9.1.1",
     "docutils": "0.22.4",
     "python": "3.12.16"
@@ -63,13 +63,15 @@
   "pypi": {
     "checked": true,
     "latest": "0.2.29",
-    "relation": "same",
+    "relation": "ahead",
     "error": null
   },
-  "reproduce": "git clone https://github.com/addaix/citeget && cd citeget\ngit checkout b88ce0fe36b4242789d7f2b94a083d9bcc9dc61b\npip install \"epythet==0.2.24\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/addaix/citeget && cd citeget\ngit checkout 8cd84194a1b470041744f58f5c64711d7f4c0d25\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.2.30) is ahead of the latest release on PyPI (0.2.29): these docs describe unreleased code."
+    ]
   }
 }
